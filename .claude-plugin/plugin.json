@@ -1,0 +1,12 @@
+{
+  "name": "claude-memory-hooks",
+  "version": "1.0.0",
+  "description": "Automatic memory injection and learning extraction for Claude Code. Injects relevant memories before each prompt and extracts learnings at session end.",
+  "author": {
+    "name": "Noah Hirshon",
+    "email": "noahhirshon@gmail.com"
+  },
+  "repository": "https://github.com/NoahHirshon/claude-memory-hooks",
+  "license": "MIT",
+  "keywords": ["memory", "context", "hooks", "learning", "persistence"]
+}
