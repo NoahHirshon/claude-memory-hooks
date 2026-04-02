@@ -1,6 +1,6 @@
 {
   "memoryDirs": ["~/.claude/memory"],
-  "maxInjections": 50,
+  "maxInjections": 5,
   "relevanceThreshold": 0.25,
   "learningEnabled": true,
   "debugMode": false

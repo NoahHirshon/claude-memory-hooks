@@ -16,14 +16,17 @@ INPUT=$(cat)
 
 # --- Extract fields (jq preferred, grep fallback) ---
 if command -v jq &>/dev/null; then
+  PROMPT=$(echo "$INPUT" | jq -r '.user_prompt // ""')
   CWD=$(echo "$INPUT" | jq -r '.cwd // ""')
 else
+  PROMPT=$(echo "$INPUT" | grep -o '"user_prompt":"[^"]*"' | sed 's/"user_prompt":"//;s/"$//' || true)
   CWD=$(echo "$INPUT" | grep -o '"cwd":"[^"]*"' | sed 's/"cwd":"//;s/"$//' || true)
 fi
 
-# For SessionStart, we don't have a user prompt to match against.
-# Instead, inject the highest-value memories (all feedback + recent project context).
-PROMPT=""
+# Skip empty or very short prompts
+if [[ ${#PROMPT} -lt 5 ]]; then
+  exit 0
+fi
 
 # --- Load config ---
 if [[ ! -f "$CONFIG" ]]; then
@@ -98,18 +101,7 @@ fi
 # --- Select memories to inject ---
 # SessionStart mode: inject all feedback memories (behavioral rules are most actionable)
 # If a prompt were available, we'd do keyword matching instead
-if [[ -z "$PROMPT" ]]; then
-  # SessionStart: inject all memories (feedback first, then user, project, reference)
-  MATCHED_FILES=$(awk -F'\t' '{
-    if ($3 == "feedback") order = 1
-    else if ($3 == "user") order = 2
-    else if ($3 == "project") order = 3
-    else order = 4
-    print order "\t" $1
-  }' "$CACHE_FILE" | sort -t$'\t' -k1,1n | cut -f2 | head -n "$MAX_INJECTIONS")
-else
-  MATCHED_FILES=$(bash "$SCRIPTS/match-memories.sh" "$PROMPT" "$CACHE_FILE" "$MAX_INJECTIONS" "$THRESHOLD" 2>/dev/null || true)
-fi
+MATCHED_FILES=$(bash "$SCRIPTS/match-memories.sh" "$PROMPT" "$CACHE_FILE" "$MAX_INJECTIONS" "$THRESHOLD" 2>/dev/null || true)
 
 if [[ -z "$MATCHED_FILES" ]]; then
   [[ "$DEBUG" == "true" ]] && echo "claude-memory-hooks: No memories to inject" >&2
@@ -169,7 +161,7 @@ escape_for_json() {
 
 ESCAPED=$(escape_for_json "$(printf '%b' "$CONTEXT")")
 
-# --- Output JSON (same format as superpowers SessionStart hook) ---
-printf '{\n  "hookSpecificOutput": {\n    "hookEventName": "SessionStart",\n    "additionalContext": "%s"\n  }\n}\n' "$ESCAPED"
+# --- Output JSON (hookSpecificOutput format for plugin hooks) ---
+printf '{\n  "hookSpecificOutput": {\n    "hookEventName": "UserPromptSubmit",\n    "additionalContext": "%s"\n  }\n}\n' "$ESCAPED"
 
 exit 0

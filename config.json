@@ -3,7 +3,7 @@
     "~/.claude/memory",
     "~/.claude/projects/-Users-noahhirshon-Desktop-Pane/memory"
   ],
-  "maxInjections": 120,
+  "maxInjections": 5,
   "relevanceThreshold": 0.25,
   "learningEnabled": false,
   "debugMode": false
