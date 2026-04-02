@@ -187,23 +187,21 @@ while IFS=$'\t' read -r role text; do
         CONTEXT_LINE="Extracted from a confirmed approach."
       fi
 
-      # Write memory file (atomic)
+      # Write memory file (atomic, safe from injection)
       TEMP="${FILEPATH}.tmp.$$"
-      cat > "$TEMP" << MEMEOF
----
-name: $FILENAME
-description: $DESC
-type: feedback
----
-
-$CONTEXT_LINE
-
-**User said:** $text
-
-**Context (what Claude was doing):** $(echo "$PREV_TEXT" | head -c 300)
-
-**How to apply:** Follow the user's guidance in future similar situations.
-MEMEOF
+      trap 'rm -f "$TEMP"' EXIT
+      PREV_TRUNCATED=$(printf '%s' "$PREV_TEXT" | head -c 300)
+      {
+        printf '%s\n' "---"
+        printf 'name: %s\n' "$FILENAME"
+        printf 'description: %s\n' "$DESC"
+        printf '%s\n' "type: feedback"
+        printf '%s\n' "---"
+        printf '\n%s\n' "$CONTEXT_LINE"
+        printf '\n**User said:** %s\n' "$text"
+        printf '\n**Context (what Claude was doing):** %s\n' "$PREV_TRUNCATED"
+        printf '\n%s\n' "**How to apply:** Follow the user'\''s guidance in future similar situations."
+      } > "$TEMP"
       mv "$TEMP" "$FILEPATH"
 
       # Append to MEMORY.md index if it exists

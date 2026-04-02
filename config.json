@@ -1,7 +1,10 @@
 {
-  "memoryDirs": ["~/.claude/memory"],
-  "maxInjections": 50,
+  "memoryDirs": [
+    "~/.claude/memory",
+    "~/.claude/projects/-Users-noahhirshon-Desktop-Pane/memory"
+  ],
+  "maxInjections": 120,
   "relevanceThreshold": 0.25,
-  "learningEnabled": true,
+  "learningEnabled": false,
   "debugMode": false
 }

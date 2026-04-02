@@ -29,7 +29,7 @@ fi
 if command -v jq &>/dev/null; then
   LEARNING_ENABLED=$(jq -r '.learningEnabled // true' "$CONFIG")
 else
-  LEARNING_ENABLED=$(grep -o '"learningEnabled":true' "$CONFIG" && echo "true" || echo "false")
+  LEARNING_ENABLED=$(grep -q '"learningEnabled":true' "$CONFIG" && echo "true" || echo "false")
 fi
 
 if [[ "$LEARNING_ENABLED" != "true" ]]; then

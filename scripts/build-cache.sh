@@ -41,6 +41,7 @@ fi
 
 # Rebuild cache
 TEMP_CACHE="${CACHE_FILE}.tmp.$$"
+trap 'rm -f "$TEMP_CACHE"' EXIT
 : > "$TEMP_CACHE"
 
 for dir in "$@"; do

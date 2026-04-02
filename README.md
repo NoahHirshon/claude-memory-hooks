@@ -16,6 +16,8 @@ The result: a recursive learning loop. You correct Claude once, the correction b
 # Clone
 git clone https://github.com/NoahHirshon/claude-memory-hooks.git
 
+# Copy the example config
+cp config.example.json config.json
 # Edit config.json — point at your memory directory
 # Default: ~/.claude/memory
 # The plugin also auto-discovers project-scoped memory at
@@ -215,7 +217,7 @@ Create your first one at `~/.claude/memory/` with the YAML frontmatter format ab
 A [known bug](https://github.com/anthropics/claude-code/issues/12151) causes UserPromptSubmit hook output to be silently dropped. SessionStart works reliably. When the bug is fixed, per-prompt matching will unlock more targeted injection.
 
 **Can I use this with Cursor/Copilot CLI?**
-The output format auto-detects the platform (Claude Code, Cursor, Copilot CLI).
+Currently built for Claude Code. Cursor and Copilot CLI support is planned.
 
 **How do I see what's being injected?**
 Set `"debugMode": true` in config.json. Matching decisions are logged to stderr.

@@ -27,17 +27,22 @@ PROMPT=""
 
 # --- Load config ---
 if [[ ! -f "$CONFIG" ]]; then
-  # First run — create default config
-  cat > "$CONFIG" << 'DEFAULTCONFIG'
+  # First run — copy from example config
+  EXAMPLE="$PLUGIN_ROOT/config.example.json"
+  if [[ -f "$EXAMPLE" ]]; then
+    cp "$EXAMPLE" "$CONFIG"
+  else
+    cat > "$CONFIG" << 'DEFAULTCONFIG'
 {
   "memoryDirs": ["~/.claude/memory"],
-  "maxInjections": 3,
+  "maxInjections": 50,
   "relevanceThreshold": 0.25,
   "learningEnabled": true,
   "debugMode": false
 }
 DEFAULTCONFIG
-  echo "claude-memory-hooks: Created default config at $CONFIG — edit memoryDirs to point at your memory files." >&2
+  fi
+  echo "claude-memory-hooks: Created config at $CONFIG — edit memoryDirs to point at your memory files." >&2
   exit 0
 fi
 

@@ -4,7 +4,7 @@ Claude Code plugin that injects relevant memories before each prompt and extract
 
 ## Architecture
 
-- **hooks/memory-inject.sh** — UserPromptSubmit hook. Reads prompt from stdin, matches against cached memory descriptions, injects top matches as context.
+- **hooks/memory-inject.sh** — SessionStart hook. Loads memory files, prioritizes by type, injects into context. Also supports per-prompt matching via UserPromptSubmit (pending Anthropic bug fix).
 - **hooks/learning-extract.sh** — Stop hook. Parses transcript for corrections/confirmations, writes new memory files.
 - **scripts/match-memories.sh** — Keyword intersection scoring algorithm (single awk pass).
 - **scripts/build-cache.sh** — Builds TSV index of memory file descriptions. Cached at /tmp/, refreshes when files change.
