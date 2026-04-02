@@ -16,12 +16,15 @@ INPUT=$(cat)
 
 # --- Extract fields (jq preferred, grep fallback) ---
 if command -v jq &>/dev/null; then
-  PROMPT=$(echo "$INPUT" | jq -r '.user_prompt // ""')
+  PROMPT=$(echo "$INPUT" | jq -r '.prompt // .user_prompt // ""')
   CWD=$(echo "$INPUT" | jq -r '.cwd // ""')
 else
-  PROMPT=$(echo "$INPUT" | grep -o '"user_prompt":"[^"]*"' | sed 's/"user_prompt":"//;s/"$//' || true)
+  PROMPT=$(echo "$INPUT" | grep -o '"prompt":"[^"]*"' | sed 's/"prompt":"//;s/"$//' || true)
   CWD=$(echo "$INPUT" | grep -o '"cwd":"[^"]*"' | sed 's/"cwd":"//;s/"$//' || true)
 fi
+
+# Normalize whitespace (newlines, tabs → spaces) for keyword matching
+PROMPT=$(printf '%s' "$PROMPT" | tr '\n\r\t' '   ')
 
 # Skip empty or very short prompts
 if [[ ${#PROMPT} -lt 5 ]]; then
