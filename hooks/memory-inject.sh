@@ -87,6 +87,9 @@ if [[ -n "$CWD" ]]; then
   fi
 fi
 
+# Deduplicate directories (auto-discovery may overlap with config)
+RESOLVED_DIRS=$(echo "$RESOLVED_DIRS" | tr ' ' '\n' | sort -u | tr '\n' ' ')
+
 # No memory directories found — nothing to inject
 if [[ -z "${RESOLVED_DIRS// /}" ]]; then
   [[ "$DEBUG" == "true" ]] && echo "claude-memory-hooks: No memory directories found" >&2
