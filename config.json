@@ -4,7 +4,7 @@
     "~/.claude/projects/-Users-noahhirshon-Desktop-Pane/memory"
   ],
   "maxInjections": 5,
-  "relevanceThreshold": 0.25,
+  "relevanceThreshold": 0.22,
   "learningEnabled": false,
   "debugMode": false
 }
